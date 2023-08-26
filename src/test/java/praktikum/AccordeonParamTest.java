@@ -25,6 +25,7 @@ public class AccordeonParamTest {
         this.result = result;
         this.accLocator = accLocator;
     }
+    //массив с параметрами аккардеона
         @Parameterized.Parameters
         public static Object[][] data(){
                     return new Object[][]{
@@ -42,12 +43,10 @@ public class AccordeonParamTest {
         public void checkTextInAcc(){
 
             MainPage mainPage = new MainPage(driverRule.getDriver());
-           //MainPage mainPage = new MainPage(driver);
-            mainPage.open();
-            mainPage.getAccLocatorAndClick(accLocator);
-            String answer = mainPage.getAccLocatorAndClick(accLocator);
-            System.out.println(answer);
-            MatcherAssert.assertThat(result, equalTo(answer));
+            mainPage.open();                                                //открываем главную
+            mainPage.getAccLocatorAndClick(accLocator);                     //выполняем действия с аккордеоном
+            String answer = mainPage.getAccLocatorAndClick(accLocator);     //забираем строку из аккордеона
+            MatcherAssert.assertThat(result, equalTo(answer));              //сравниваем со строкой из массива
 
         }
 
