@@ -54,6 +54,11 @@ public class OrderPageNext {
                 .until(ExpectedConditions.visibilityOfElementLocated(NAZADBUT));
         return this;
     }
+// просто ждун без привязки к кнопкам
+    public OrderPageNext waitWithDefaultTimeout(){
+        new WebDriverWait(driver, Duration.ofSeconds(EnvConfig.DEFAULT_TIMEOUT));
 
+        return this;
+    }
 
 }

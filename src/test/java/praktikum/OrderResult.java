@@ -1,10 +1,11 @@
 package praktikum;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Rule;
 import org.junit.Test;
-import praktikum.pages.MainPage;
-import praktikum.pages.OrderPage;
-import praktikum.pages.OrderPageNext;
+import praktikum.pages.*;
+
+import static net.bytebuddy.matcher.ElementMatchers.is;
 
 public class OrderResult {
 
@@ -29,8 +30,19 @@ public class OrderResult {
                 .fillInRentTime()                   // заполняем срок аренды
                 .clickCalendar()                    // отправляем дату в календарь
                 .selectColour()                     //выбираем цвет
-                .zakazatClick();                    //кликаем заказать
+                .zakazatClick()
+                 .waitWithDefaultTimeout();
+
+         PopupPage popupPage = new PopupPage(driverRule.getDriver());
+                popupPage.clickYESOnPopup()
+                .clickShowStatus();
+
+        TrackPage trackPage = new TrackPage(driverRule.getDriver());
+        trackPage.showTrackForm()       //кликаем заказать
+        .findCancelOrderButton();
+        MatcherAssert.assertThat(trackPage.findCancelOrderButton(), true);  // проверяем, что отрисовалась кнопка "Отменить заказ", то есть сам заказ успешно состоялся
     }
+
     //заказываем через нижнюю кнопку
     @Test
     public void OrderWithBottomButton(){
@@ -40,17 +52,29 @@ public class OrderResult {
                 .scrollToBottomButton()             //скроллим до нижней кнопки
                 .clickRentButtonBOTTOM();           //кликаем заказать
 
-        OrderPage orderPage = new OrderPage(driverRule.getDriver());
+        OrderPage orderPage = new OrderPage(driverRule.getDriver()); //открывается страница заказа
 
-        orderPage.fillInOrderForm()
-                 .clickDalee();
+        orderPage.fillInOrderForm()             //заполняем информацию  ФИО на странице заказа
+                 .clickDalee();                 //кликаем далее
 
-        OrderPageNext detailsPage = new OrderPageNext(driverRule.getDriver());
-            detailsPage.wait10sec()
-                .fillInRentTime()
-                .clickCalendar()
-                .selectColour()
-                .zakazatClick();
+        OrderPageNext detailsPage = new OrderPageNext(driverRule.getDriver()); //открывается вторая страница заказа
+            detailsPage.wait10sec()                         //на всякий случай ждем
+                .fillInRentTime()                           //заполняем на сколько заказ
+                .clickCalendar()                            //когда заказ
+                .selectColour()                             //какой цвет хотим
+                .zakazatClick()                            //тыкаем заказать
+                    .waitWithDefaultTimeout();              //ждем на всякий случай
 
+        PopupPage popupPage = new PopupPage(driverRule.getDriver());    //открываем попап
+        popupPage.clickYESOnPopup()                                     //тыкаем там ДА
+                .clickShowStatus();                                     //во втором попапе тыкаем показать статус
+
+
+        TrackPage trackPage = new TrackPage(driverRule.getDriver());        //открывается страница со статусом заказа
+            trackPage.showTrackForm()                                      //ищем, что на странице отрисовалась форма заказа
+                    .findCancelOrderButton();
+
+
+        MatcherAssert.assertThat(trackPage.findCancelOrderButton(), true);  // проверяем, что отрисовалась кнопка "Отменить заказ", то есть сам заказ успешно состоялся
     }
 }
